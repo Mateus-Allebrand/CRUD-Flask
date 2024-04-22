@@ -24,8 +24,8 @@ lista_jogos = [jogo01,jogo02,jogo03]
 app = Flask(__name__)
 
 #aqui estou criando uma rota, tenho que criar uma função para dizer o que vai ter nessa rota
-@app.route("/inicio")
-def ola():
+@app.route("/")
+def index():
     
     return render_template("lista.html",titulo="Jogos", jogos = lista_jogos)  # como não estou lidando apenas com um terminal, preciso colocar aas tags, pois na web lingaugem como "hello World" sem tag, não seria intendido
 
@@ -48,7 +48,7 @@ def criar():
 
 \
 #para rodar nossa aplicação temos que finalizar com 
-app.run()
+app.run(debug=True)
 
 
 
