@@ -1,4 +1,4 @@
-from flask import Flask,render_template, request
+from flask import Flask,render_template, request, redirect,session,flash
 
 
 class Jogo:
@@ -22,6 +22,7 @@ lista_jogos = [jogo01,jogo02,jogo03]
 
 #crio uma variavel que vai armazenar a minha aplicação \\\ o __name__ faz referencia a esse proprio arquivo (garante que vai rodar a aplicaçao)
 app = Flask(__name__)
+app.secret_key = "alumais"
 
 #aqui estou criando uma rota, tenho que criar uma função para dizer o que vai ter nessa rota
 @app.route("/")
@@ -43,10 +44,25 @@ def criar():
     jogo = Jogo(nome,categoria,console)
     lista_jogos.append(jogo)
 
-    return render_template("lista.html", titulo = "Jogos", jogos = lista_jogos)
+    # return render_template("lista.html", titulo = "Jogos", jogos = lista_jogos) #ao invés desse codigo vou usar redirect
+    return redirect("/")
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
 
 
-\
+@app.route("/autenticar", methods=["POST",])
+def autenticar():
+    if "1234" == request.form["senha"]:
+        session["Usuario_logado"] = request.form["usuario"]
+        flash(session["Usuario_logado"] + "Logado com sucesso!")
+        return redirect("/")
+    else:
+        flash("Usuario não logado! ")
+        return redirect("/login")
+
+
 #para rodar nossa aplicação temos que finalizar com 
 app.run(debug=True)
 
