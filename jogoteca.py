@@ -1,4 +1,4 @@
-from flask import Flask,render_template, request, redirect,session,flash
+from flask import Flask,render_template, request, redirect,session,flash,url_for
 
 
 class Jogo:
@@ -34,6 +34,8 @@ def index():
 
 @app.route("/novo")
 def novo():
+    if "Usuario_logado" not in session or session["Usuario_logado"] == None: 
+        return redirect(url_for("login", proxima = url_for("novo"))) #return redirect("/login?proxima=novo") 
     return render_template("novo.html", titulo = "Novo Jogo")
 
 @app.route("/criar", methods = ["POST",])
@@ -45,11 +47,12 @@ def criar():
     lista_jogos.append(jogo)
 
     # return render_template("lista.html", titulo = "Jogos", jogos = lista_jogos) #ao invés desse codigo vou usar redirect
-    return redirect("/")
+    return redirect(url_for("index"))
 
 @app.route("/login")
 def login():
-    return render_template("login.html")
+    proxima = request.args.get("proxima")
+    return render_template("login.html", proxima=proxima)
 
 
 @app.route("/autenticar", methods=["POST",])
@@ -57,10 +60,17 @@ def autenticar():
     if "1234" == request.form["senha"]:
         session["Usuario_logado"] = request.form["usuario"]
         flash(session["Usuario_logado"] + "Logado com sucesso!")
-        return redirect("/")
+        proxima_pagina = request.form["proxima"]
+        return redirect(proxima_pagina) #"/{}".format(proxima_pagina)
     else:
         flash("Usuario não logado! ")
-        return redirect("/login")
+        return redirect(url_for("login"))
+    
+@app.route("/logout")
+def logout():
+    session["Usuario_logado"] = None
+    flash("Logout efefuado com sucesso! ")
+    return redirect(url_for("index"))
 
 
 #para rodar nossa aplicação temos que finalizar com 
