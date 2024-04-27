@@ -19,6 +19,27 @@ jogo03 = Jogo("Mortal kombat", "Luta", "PS2")
 lista_jogos = [jogo01,jogo02,jogo03]
 
 
+class Usuario:
+    def __init__(self, nome, nickname, senha):
+        
+        self.nome = nome
+        self.nickname = nickname
+        self.senha = senha
+
+    
+
+usuario01 = Usuario("Mateus Allebrand", "Mat", "1234")
+usuario02 = Usuario("Mariana Alves", "Mari", "4567")
+usuario03 = Usuario("Gabrielli Sena", "Gabi", "1236")
+
+usuarios ={usuario01.nome:usuario01,
+           usuario02.nome:usuario02,
+           usuario03.nome:usuario03}  
+ 
+
+
+
+
 
 #crio uma variavel que vai armazenar a minha aplicação \\\ o __name__ faz referencia a esse proprio arquivo (garante que vai rodar a aplicaçao)
 app = Flask(__name__)
@@ -29,7 +50,6 @@ app.secret_key = "alumais"
 def index():
     
     return render_template("lista.html",titulo="Jogos", jogos = lista_jogos)  # como não estou lidando apenas com um terminal, preciso colocar aas tags, pois na web lingaugem como "hello World" sem tag, não seria intendido
-
 
 
 @app.route("/novo")
@@ -57,11 +77,15 @@ def login():
 
 @app.route("/autenticar", methods=["POST",])
 def autenticar():
-    if "1234" == request.form["senha"]:
-        session["Usuario_logado"] = request.form["usuario"]
-        flash(session["Usuario_logado"] + "Logado com sucesso!")
-        proxima_pagina = request.form["proxima"]
-        return redirect(proxima_pagina) #"/{}".format(proxima_pagina)
+    if request.form["usuario"] in usuarios:
+        usuario = usuarios[request.form["usuario"]]
+        
+        if request.form["senha"] == usuario.senha:
+            session["Usuario_logado"] = usuario.nickname 
+            flash(usuario.nickname + "Logado com sucesso!")
+            proxima_pagina = request.form["proxima"]
+            return redirect(proxima_pagina) #"/{}".format(proxima_pagina)
+        
     else:
         flash("Usuario não logado! ")
         return redirect(url_for("login"))
